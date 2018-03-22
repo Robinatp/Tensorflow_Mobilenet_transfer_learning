@@ -1041,10 +1041,18 @@ def main(_):
 
     validation_writer = tf.summary.FileWriter(
         FLAGS.summaries_dir + '/validation')
-
+    saver = tf.train.Saver()
     # Set up all our weights to their initial default values.
-    init = tf.global_variables_initializer()
-    sess.run(init)
+#     init = tf.global_variables_initializer()
+#     sess.run(init)
+    if os.path.exists('mobilenet/checkpoint'):              #判断模型是否存在
+        latest_ckpt = tf.train.latest_checkpoint('mobilenet/') #存在就从模型中恢复变�?
+        if latest_ckpt:
+            print(latest_ckpt) 
+            saver.restore(sess, latest_ckpt)
+    else:  
+        init = tf.global_variables_initializer() #不存在就初始化变�? 
+        sess.run(init)
 
     # Run the training for as many cycles as requested on the command line.
     for i in range(FLAGS.how_many_training_steps):
@@ -1098,6 +1106,9 @@ def main(_):
         tf.logging.info('%s: Step %d: Validation accuracy = %.1f%% (N=%d)' %
                         (datetime.now(), i, validation_accuracy * 100,
                          len(validation_bottlenecks)))
+        
+        # Save model
+        saver_path = saver.save(sess,"mobilenet/model.ckpt")
 
       # Store intermediate results
       intermediate_frequency = FLAGS.intermediate_store_frequency

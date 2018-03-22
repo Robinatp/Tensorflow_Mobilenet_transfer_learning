@@ -84,8 +84,8 @@ if __name__ == "__main__":
   parser.add_argument("--labels", help="name of file containing labels")
   parser.add_argument("--input_height", type=int, help="input height")
   parser.add_argument("--input_width", type=int, help="input width")
-  parser.add_argument("--input_mean", type=int, help="input mean")
-  parser.add_argument("--input_std", type=int, help="input std")
+  parser.add_argument("--input_mean", type=int, default="128",help="input mean")
+  parser.add_argument("--input_std", type=int, default="128",help="input std")
   parser.add_argument("--input_layer", help="name of input layer")
   parser.add_argument("--output_layer", help="name of output layer")
   args = parser.parse_args()
@@ -119,7 +119,9 @@ if __name__ == "__main__":
   input_name = "import/" + input_layer
   output_name = "import/" + output_layer
   input_operation = graph.get_operation_by_name(input_name);
+  print(input_operation.outputs[0])
   output_operation = graph.get_operation_by_name(output_name);
+  print(output_operation.outputs[0])
 
   with tf.Session(graph=graph) as sess:
     start = time.time()

@@ -21,6 +21,7 @@ import os
 
 import sys
 import tensorflow as tf
+slim = tf.contrib.slim
 
 def load_graph(file_name):
   with open(file_name,'rb') as f:
@@ -29,10 +30,20 @@ def load_graph(file_name):
   graph_def.ParseFromString(content)
   with tf.Graph().as_default() as graph:
     tf.import_graph_def(graph_def, name='')
+    
   return graph
 
 def count_ops(file_name, op_name = None):
   graph = load_graph(file_name)
+
+  print("operations:")  
+  ops = graph.get_operations()
+  for op in ops:
+    print(op.name)
+  
+
+  writer =tf.summary.FileWriter("log_graph",graph)
+  writer.close() 
 
   if op_name is None:
     return len(graph.get_operations())
