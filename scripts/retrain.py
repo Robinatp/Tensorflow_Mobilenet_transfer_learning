@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -1045,8 +1046,8 @@ def main(_):
     # Set up all our weights to their initial default values.
 #     init = tf.global_variables_initializer()
 #     sess.run(init)
-    if os.path.exists('mobilenet/checkpoint'):              #判断模型是否存在
-        latest_ckpt = tf.train.latest_checkpoint('mobilenet/') #存在就从模型中恢复变�?
+    if os.path.exists(FLAGS.checkpoint_path+'checkpoint'):              #判断模型是否存在
+        latest_ckpt = tf.train.latest_checkpoint(FLAGS.checkpoint_path) #存在就从模型中恢复变�?
         if latest_ckpt:
             print(latest_ckpt) 
             saver.restore(sess, latest_ckpt)
@@ -1108,7 +1109,7 @@ def main(_):
                          len(validation_bottlenecks)))
         
         # Save model
-        saver_path = saver.save(sess,"mobilenet/model.ckpt")
+        saver_path = saver.save(sess,FLAGS.checkpoint_path+"model.ckpt",global_step=i+1)
 
       # Store intermediate results
       intermediate_frequency = FLAGS.intermediate_store_frequency
@@ -1158,6 +1159,12 @@ if __name__ == '__main__':
       type=str,
       default='',
       help='Path to folders of labeled images.'
+  )
+  parser.add_argument(
+      '--checkpoint_path',
+      type=str,
+      default='',
+      help='Where to save the trained graph.'
   )
   parser.add_argument(
       '--output_graph',

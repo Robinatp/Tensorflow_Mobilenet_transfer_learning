@@ -25,12 +25,12 @@ def load_labels(label_file):
   return label
 
 with tf.Session() as sess:
-    latest_ckpt = tf.train.latest_checkpoint('tf_files/mobilenet/') #存在就从模型中恢复变量 
+    latest_ckpt = tf.train.latest_checkpoint('tf_files/inception/') #存在就从模型中恢复变量 
     if latest_ckpt:
         print(latest_ckpt) 
         saver = tf.train.import_meta_graph(latest_ckpt+'.meta')#直接加载持久化的图
 
-    chkpt_fname = tf.train.latest_checkpoint("tf_files/mobilenet")#获取checkpoint
+    chkpt_fname = tf.train.latest_checkpoint("tf_files/inception/")#获取checkpoint
     print("model_name: " +  chkpt_fname)
     if  chkpt_fname:
         saver.restore(sess,chkpt_fname)
@@ -42,24 +42,24 @@ with tf.Session() as sess:
     for op in ops:
         print(op.name)
 
-    writer = tf.summary.FileWriter("logs_mobilenet_from_ckpt", graph=sess.graph)
+    writer = tf.summary.FileWriter("logs_inception_from_ckpt", graph=sess.graph)
     graph = tf.get_default_graph()#获取session中的默认图
     #恢复传入值
-    xx = graph.get_tensor_by_name('input:0')
+    xx = graph.get_tensor_by_name('DecodeJpeg:0')
     print(xx)
     #计算利用训练好的模型参数计算预测值
     output = graph.get_tensor_by_name('final_result:0')
     print(output)
 
     # 读入待识别图片
-    image_data = Image.open("tf_files/flower_photos/daisy/21652746_cc379e0eea_m.jpg")
+    image_data = Image.open("tf_files/flower_photos/roses/2414954629_3708a1a04d.jpg")
     # 该MobileNet模型需要128*128的图片输入
     image_data = array(image_data.resize((224, 224)),dtype=float32)
     # 图片预处理
     image_data = (image_data-128)*1.0/128
 #     print(image_data)
 #     img_out = sess.run(bottneck, feed_dict={xx:image_data})
-    pre = sess.run(output, feed_dict={xx:np.reshape(image_data, [-1, 224, 224, 3])})
+    pre = sess.run(output, feed_dict={xx:image_data})
 #     print(img_out.shape)
     print(pre)
     

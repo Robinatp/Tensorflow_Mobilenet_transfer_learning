@@ -23,7 +23,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
-
+import PIL.Image as Image
 def load_graph(model_file):
   graph = tf.Graph()
   graph_def = tf.GraphDef()
@@ -125,8 +125,13 @@ if __name__ == "__main__":
 
   with tf.Session(graph=graph) as sess:
     start = time.time()
-    results = sess.run(output_operation.outputs[0],
+    if input_layer == "input":
+        results = sess.run(output_operation.outputs[0],
                       {input_operation.outputs[0]: t})
+    else:
+        img = Image.open(file_name)
+        results = sess.run(output_operation.outputs[0],
+                      {input_operation.outputs[0]: img})
     end=time.time()
   results = np.squeeze(results)
 
