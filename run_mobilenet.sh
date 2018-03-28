@@ -68,6 +68,7 @@ python -m scripts.quantize_graph \
   --input=tf_files/optimized_graph.pb \
   --output=tf_files/rounded_graph.pb \
   --output_node_names=final_result \
+  --print_nodes=True \
   --mode=weights_rounded
 
 python -m scripts.label_image \

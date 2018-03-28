@@ -76,16 +76,16 @@ python -m scripts.quantize_graph \
 python -m scripts.label_image \
   --image=tf_files/flower_photos/daisy/3475870145_685a19116d.jpg \
   --graph=tf_files/rounded_inception_graph.pb  \
-   --labels=tf_files/retrained_inception_labels.txt \
-   --input_layer="Cast" \
-   --output_layer="final_result" 
+  --labels=tf_files/retrained_inception_labels.txt \
+  --input_layer="Cast" \
+  --output_layer="final_result"
 
 python -m scripts.label_image \
   --image=tf_files/flower_photos/daisy/3475870145_685a19116d.jpg \
   --graph=tf_files/rounded_inception_graph.pb  \
   --labels=tf_files/retrained_inception_labels.txt \
-   --input_layer="Cast" \
-   --output_layer="final_result" 
+  --input_layer="Cast" \
+  --output_layer="final_result"
   
   
 python -m scripts.evaluate  tf_files/retrained_inception_graph.pb

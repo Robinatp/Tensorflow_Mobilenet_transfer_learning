@@ -42,20 +42,38 @@ def load_graph(frozen_graph_filename):
         tf.import_graph_def(graph_def)
     return graph
 
+#mobilenet
+# freeze_graph("tf_files/mobilenet/", output_node_names="final_result")      
+# graph = load_graph("tf_files/mobilenet/frozen_graph.pb")
+# 
+# for op in graph.get_operations():
+#     print(op.name)
+#    
+# 
+# input_x = graph.get_tensor_by_name("import/input:0")
+# print(input_x)
+# out = graph.get_tensor_by_name("import/final_result:0")    
+# print(out)
+# 
+# input_operation = graph.get_operation_by_name('import/input')
+# print(input_operation.outputs[0])
+# output_operation = graph.get_operation_by_name('import/final_result')
+# print(output_operation.outputs[0])
 
-freeze_graph("mobilenet/", output_node_names="final_result")      
-graph = load_graph("mobilenet/frozen_graph.pb")
+#inception
+freeze_graph("tf_files/inception/", output_node_names="final_result")      
+graph = load_graph("tf_files/inception/frozen_graph.pb")
 
 for op in graph.get_operations():
     print(op.name)
    
 
-input_x = graph.get_tensor_by_name("import/input:0")
+input_x = graph.get_tensor_by_name("import/DecodeJpeg:0")
 print(input_x)
 out = graph.get_tensor_by_name("import/final_result:0")    
 print(out)
 
-input_operation = graph.get_operation_by_name('import/input')
+input_operation = graph.get_operation_by_name('import/DecodeJpeg')
 print(input_operation.outputs[0])
 output_operation = graph.get_operation_by_name('import/final_result')
 print(output_operation.outputs[0])
