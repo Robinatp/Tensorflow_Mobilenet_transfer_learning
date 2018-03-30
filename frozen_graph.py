@@ -1,16 +1,29 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import argparse
+import os
+import sys
+
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
+from tensorflow.python.platform import app
 import os
 import PIL.Image as Image
 import  numpy as np
-def freeze_graph(model_dir, output_node_names):
+
+
+FLAGS = None
+
+def freeze_graph():
     """
     freeze the saved checkpoints/graph to *.pb
     """
-    checkpoint = tf.train.get_checkpoint_state(model_dir)
+    checkpoint = tf.train.get_checkpoint_state(FLAGS.input_checkpoint)
     input_checkpoint = checkpoint.model_checkpoint_path
     
-    output_graph = os.path.join(model_dir, "frozen_graph.pb")
+    output_graph = os.path.join(FLAGS.input_checkpoint, FLAGS.output_graph)
     
     saver = tf.train.import_meta_graph(input_checkpoint + ".meta", 
                                        clear_devices=True)
@@ -23,7 +36,7 @@ def freeze_graph(model_dir, output_node_names):
 
         output_graph_def = graph_util.convert_variables_to_constants(sess,
                                                                      input_graph_def,
-                                                                     output_node_names.split(","))
+                                                                     FLAGS.output_names.split(","))
 
         with tf.gfile.GFile(output_graph, "wb") as f:
             f.write(output_graph_def.SerializeToString())
@@ -42,42 +55,59 @@ def load_graph(frozen_graph_filename):
         tf.import_graph_def(graph_def)
     return graph
 
-#mobilenet
-# freeze_graph("tf_files/mobilenet/", output_node_names="final_result")      
-# graph = load_graph("tf_files/mobilenet/frozen_graph.pb")
-# 
-# for op in graph.get_operations():
-#     print(op.name)
-#    
-# 
-# input_x = graph.get_tensor_by_name("import/input:0")
-# print(input_x)
-# out = graph.get_tensor_by_name("import/final_result:0")    
-# print(out)
-# 
-# input_operation = graph.get_operation_by_name('import/input')
-# print(input_operation.outputs[0])
-# output_operation = graph.get_operation_by_name('import/final_result')
-# print(output_operation.outputs[0])
 
-#inception
-freeze_graph("tf_files/inception/", output_node_names="final_result")      
-graph = load_graph("tf_files/inception/frozen_graph.pb")
+def main(unused_args):
 
-for op in graph.get_operations():
-    print(op.name)
-   
+    freeze_graph()
+       
+    frozen_graph_path = os.path.join(FLAGS.input_checkpoint, FLAGS.output_graph)   
+    graph = load_graph(frozen_graph_path)
+    
+    for op in graph.get_operations():
+        print(op.name)
+    
+    input_operation = graph.get_operation_by_name('import/'+FLAGS.input_names)
+    print(input_operation.outputs[0])
+    output_operation = graph.get_operation_by_name('import/'+FLAGS.output_names)
+    print(output_operation.outputs[0])
+    
+    return 0
 
-input_x = graph.get_tensor_by_name("import/DecodeJpeg:0")
-print(input_x)
-out = graph.get_tensor_by_name("import/final_result:0")    
-print(out)
+def parse_args():
+  """Parses command line arguments."""
+  parser = argparse.ArgumentParser()
+  
+  parser.add_argument(
+      "--input_checkpoint",
+      type=str,
+      default="tf_files/inception/",
+      help="TensorFlow variables file to load.")
+  
+  parser.add_argument(
+      "--output_graph",
+      type=str,
+      default="frozen_graph.pb",
+      help="Output \'GraphDef\' file name.")
+  
 
-input_operation = graph.get_operation_by_name('import/DecodeJpeg')
-print(input_operation.outputs[0])
-output_operation = graph.get_operation_by_name('import/final_result')
-print(output_operation.outputs[0])
+  parser.add_argument(
+      "--input_names",
+      type=str,
+      default="DecodeJpeg",
+      help="Input node names, comma separated.")
+  
+  parser.add_argument(
+      "--output_names",
+      type=str,
+      default="final_result",
+      help="Output node names, comma separated.")
 
+  return parser.parse_known_args()
+
+
+if __name__ == "__main__":
+  FLAGS, unparsed = parse_args()
+  app.run(main=main, argv=[sys.argv[0]] + unparsed)
 
 
 
