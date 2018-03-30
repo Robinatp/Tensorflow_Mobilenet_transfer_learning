@@ -2,6 +2,8 @@
 transfor learning of Mobilenet by tensorflow,include train , test, frozen graph
 
 #five script as follows:
+
+
 		'''
 		run_mobilenet.sh
 		run_inception.sh
@@ -9,9 +11,13 @@ transfor learning of Mobilenet by tensorflow,include train , test, frozen graph
 		run_frozen_graph.sh
 		run_count_ops.sh
 		'''
+		
+		
 1,train or test or optimize or quantize or tflite for mobilenet/inception.When setting the checkpoint_path,it could load latest checkpoint and restore values,and train the model by this weight values.If you set output_graph,you will get a pb after retrain finishs.
+
 		run_mobilenet.sh
 		run_inception.sh
+
 
 2,run_evaluate.sh——eval the model and print the final accuracy
 
